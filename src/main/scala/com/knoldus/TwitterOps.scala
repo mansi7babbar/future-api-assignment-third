@@ -22,8 +22,8 @@ object TwitterOps extends TwitterSetup {
 
   def getAverageLikesPerTweet(tweets: Future[List[Status]]): Future[Int] = {
     tweets.map { tweets =>
-      val getFavouriteCount = tweets.foldLeft(0) { (_, tweet) =>
-        tweet.getFavoriteCount
+      val getFavouriteCount = tweets.foldLeft(0) { (sum, tweet) =>
+        sum + tweet.getFavoriteCount
       }
       getFavouriteCount / tweets.length
     }
@@ -31,8 +31,8 @@ object TwitterOps extends TwitterSetup {
 
   def getAverageRetweetsPerTweet(tweets: Future[List[Status]]): Future[Int] = {
     tweets.map { tweets =>
-      val getRetweetCount = tweets.foldLeft(0) { (_, tweet) =>
-        tweet.getRetweetCount
+      val getRetweetCount = tweets.foldLeft(0) { (sum, tweet) =>
+        sum + tweet.getRetweetCount
       }
       getRetweetCount / tweets.length
     }

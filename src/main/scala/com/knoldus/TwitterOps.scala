@@ -1,5 +1,8 @@
 package com.knoldus
 
+import java.sql.Timestamp
+import java.time.Duration
+
 import twitter4j._
 
 import scala.collection.JavaConverters._
@@ -37,4 +40,19 @@ object TwitterOps extends TwitterSetup {
       getRetweetCount / tweets.length
     }
   }
+
+  def getAverageTweetsPerDay(posts: Future[List[Status]]): Future[Long] = {
+    val sortedPosts = posts.map(post => post.sortWith((a, b) => a.getCreatedAt.before(b.getCreatedAt)))
+    val start = sortedPosts.map(sortedPost => sortedPost.head.getCreatedAt)
+    val end = sortedPosts.map(sortedPost => sortedPost.reverse.head.getCreatedAt)
+    val localStart = start.map(start => new Timestamp(start.getTime).toLocalDateTime)
+    val localEnd = end.map(end => new Timestamp(end.getTime).toLocalDateTime)
+    val duration = localEnd.map(localEnd =>
+      localStart.map(localStart =>
+        Duration.between(localStart, localEnd))).flatten
+    duration.map(duration => posts.map(posts => posts.length / (duration.getSeconds / 86400))).flatten
+  }.fallbackTo(Future {
+    -1
+  })
+
 }

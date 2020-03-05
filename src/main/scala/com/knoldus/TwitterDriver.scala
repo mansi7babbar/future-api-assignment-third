@@ -5,4 +5,5 @@ object TwitterDriver extends App {
   val numberOfTweets = TwitterOps.getNumberOfTweets(retrievedTweets)
   val averageLikesPerTweet = TwitterOps.getAverageLikesPerTweet(retrievedTweets)
   val averageRetweetsPerTweet = TwitterOps.getAverageRetweetsPerTweet(retrievedTweets)
+  val averageTweetsPerDay = TwitterOps.getAverageTweetsPerDay(retrievedTweets)
 }

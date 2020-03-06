@@ -12,48 +12,44 @@ import scala.concurrent.Future
 
 case class CustomTweet(id: Long, favoriteCount: Int, reTweetCount: Int, createdAt: Date)
 
-object TwitterOps extends TwitterSetup {
+class TwitterOps extends TwitterSetup {
 
   def retrieveTweet(hashTag: String): Future[List[CustomTweet]] = Future {
     val hashTagQuery = new Query(hashTag)
     val retrievedTweets = twitter.search(hashTagQuery).getTweets.asScala.toList
     retrievedTweets.map(retrievedTweet => CustomTweet(retrievedTweet.getId, retrievedTweet.getFavoriteCount,
       retrievedTweet.getRetweetCount, retrievedTweet.getCreatedAt))
-  }.fallbackTo(Future {
-    -1
-  })
+  }
 
-  def getNumberOfTweets(tweets: Future[List[CustomTweet]]): Future[Int] = {
+  def getNumberOfTweets(hashTag: String): Future[Int] = {
+    val tweets = retrieveTweet(hashTag: String)
     tweets.map { tweets =>
       tweets.length
     }
-  }.fallbackTo(Future {
-    -1
-  })
+  }
 
-  def getAverageLikesPerTweet(tweets: Future[List[CustomTweet]]): Future[Int] = {
+  def getAverageLikesPerTweet(hashTag: String): Future[Int] = {
+    val tweets = retrieveTweet(hashTag: String)
     tweets.map { tweets =>
       val getFavouriteCount = tweets.foldLeft(0) { (sum, tweet) =>
         sum + tweet.favoriteCount
       }
       getFavouriteCount / tweets.length
     }
-  }.fallbackTo(Future {
-    -1
-  })
+  }
 
-  def getAverageRetweetsPerTweet(tweets: Future[List[CustomTweet]]): Future[Int] = {
+  def getAverageRetweetsPerTweet(hashTag: String): Future[Int] = {
+    val tweets = retrieveTweet(hashTag: String)
     tweets.map { tweets =>
       val getRetweetCount = tweets.foldLeft(0) { (sum, tweet) =>
         sum + tweet.reTweetCount
       }
       getRetweetCount / tweets.length
     }
-  }.fallbackTo(Future {
-    -1
-  })
+  }
 
-  def getAverageTweetsPerDay(posts: Future[List[CustomTweet]]): Future[Long] = {
+  def getAverageTweetsPerDay(hashTag: String): Future[Long] = {
+    val posts = retrieveTweet(hashTag: String)
     val sortedPosts = posts.map(post => post.sortWith((a, b) => a.createdAt.before(b.createdAt)))
     val start = sortedPosts.map(sortedPost => sortedPost.head.createdAt)
     val end = sortedPosts.map(sortedPost => sortedPost.reverse.head.createdAt)
@@ -63,8 +59,6 @@ object TwitterOps extends TwitterSetup {
       localStart.map(localStart =>
         Duration.between(localStart, localEnd))).flatten
     duration.map(duration => posts.map(posts => posts.length / (duration.getSeconds / 86400))).flatten
-  }.fallbackTo(Future {
-    -1
-  })
+  }
 
 }

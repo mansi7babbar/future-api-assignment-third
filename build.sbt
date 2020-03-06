@@ -11,3 +11,5 @@ libraryDependencies += "org.scalamock" %% "scalamock" % "4.4.0" % Test
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % Test
 
 libraryDependencies += "com.typesafe" % "config" % "1.4.0"
+
+libraryDependencies += "org.mockito" %% "mockito-scala" % "1.11.4" % Test

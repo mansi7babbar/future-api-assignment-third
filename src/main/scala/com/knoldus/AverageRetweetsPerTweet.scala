@@ -1,12 +1,11 @@
 package com.knoldus
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-class AverageRetweetsPerTweet(retrieveTweets: RetrieveTweets) {
-  def getAverageRetweetsPerTweet(hashTag: String): Future[Int] = {
-    val tweets = retrieveTweets.retrieveTweet(hashTag: String)
-    tweets.map { tweets =>
+class AverageRetweetsPerTweet {
+  def getAverageRetweetsPerTweet(customTweets: Future[List[CustomTweet]]): Future[Int] = {
+    customTweets.map { tweets =>
       val getRetweetCount = tweets.foldLeft(0) { (sum, tweet) =>
         sum + tweet.reTweetCount
       }

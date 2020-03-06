@@ -8,15 +8,12 @@ import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RetrieveTweets extends TwitterSetup {
-
-  def searchHashtag(hashTag: String): List[Status] = {
-    val hashTagQuery = new Query(hashTag)
-    twitter.search(hashTagQuery).getTweets.asScala.toList
-  }
+class RetrieveTweets(twitterSetup: TwitterSetup) {
 
   def retrieveTweet(hashTag: String): Future[List[CustomTweet]] = Future {
-    searchHashtag(hashTag).map(retrievedTweet => CustomTweet(retrievedTweet.getId, retrievedTweet.getFavoriteCount,
+    val hashTagQuery = new Query(hashTag)
+    val tweetStatus = twitterSetup.getTwitterInstance.search(hashTagQuery).getTweets.asScala.toList
+    tweetStatus.map(retrievedTweet => CustomTweet(retrievedTweet.getId, retrievedTweet.getFavoriteCount,
       retrievedTweet.getRetweetCount, retrievedTweet.getCreatedAt
         .toInstant.atZone(ZoneId.systemDefault()).toLocalDate))
   }.recover({

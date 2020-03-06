@@ -1,12 +1,11 @@
 package com.knoldus
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-class NumberOfTweets(retrieveTweets: RetrieveTweets) {
-  def getNumberOfTweets(hashTag: String): Future[Int] = {
-    val tweets = retrieveTweets.retrieveTweet(hashTag: String)
-    tweets.map { tweets =>
+class NumberOfTweets {
+  def getNumberOfTweets(customTweets: Future[List[CustomTweet]]): Future[Int] = {
+    customTweets.map { tweets =>
       tweets.length
     }
   }.recover({

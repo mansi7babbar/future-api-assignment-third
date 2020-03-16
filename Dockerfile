@@ -1,5 +1,3 @@
-FROM openjdk:8-jre-alpine
-RUN mkdir -p /opt/app
-WORKDIR /opt/app
-COPY ./run_jar.sh ./target/scala-2.13/app-assembly.jar ./
-ENTRYPOINT ["./run_jar.sh"]
+FROM openjdk:8-jdk-alpine
+COPY target/scala-2.12/future-api-assignment-third-assembly-0.1.jar /future-api-assignment-third-assembly-0.1.jar
+ENTRYPOINT exec java $* -jar /future-api-assignment-third-assembly-0.1.jar
